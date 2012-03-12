@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="../src/realtime-thermometer.css" type="text/css" />
+  </head>
+  <body>
+    
+    <div class="thermometer-widget styled">
+
+      <div class="title">GiveCamp UK</div>
+      <div class="cause">Buy Paul &amp; Rachel beer!</div>  
+
+      <div class="figures">
+        <div class="goal">
+          <span class="label">Our Goal</span>
+          <span class="value">&pound;5,000</span>
+        </div>
+        <div class="current_total">
+          <span class="label">Raised so far</span>
+          <span class="value">&pound;3,000</span>
+        </div>
+      </div>
+
+      <div class="display">
+        <div class="thermometer">
+          <div class="top"></div>
+          <div class="middle">
+              <div class="value"></div>
+          </div>
+          <div class="base current_total">
+            <div class="value">&pound;3,000</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    
+    <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+    <script src="http://js.pusher.com/1.11/pusher.min.js"></script>
+    <script src="../src/realtime-thermometer.js"></script>
+    <script>
+    $(function() {
+      var config = setUp('.thermometer-widget.styled');
+      addBehaviours(config, false);
+
+      var pusher = new Pusher("006c79b1fe1700c6c10d");
+      var channel = pusher.subscribe('givecampuk-channel');
+      var animateInterval = null;
+      channel.bind('new_donation', function(data) {
+        if(animateInterval) {
+          clearInterval(animateInterval);
+        }
+        var newTotal = data.newTotal;
+        var currentTotalValue = getNumericVal(config.el, '.figures .current_total .value');
+        animateInterval = animateDonation(config.middleValueEl, config.currentTotalEl, currentTotalValue, 
+                                          newTotal, config.pixelsPerValue, config.goalValue);
+      });
+      
+      // get initial values
+      $.ajax({
+          url: 'http://www.leggetter.co.uk/pusher/blogs/givecampuk_thermometer/current_total.php',
+          dataType: 'jsonp',
+          success: function(currentTotal){
+            animateValues(config.middleValueEl, config.currentTotalEl, 0,
+                          currentTotal, config.goalValue, config.pixelsPerValue);
+          },
+          error: function() {
+            alert('oh oh! something went wrong. Tweet at @leggetter.');
+          }
+        });
+    });
+    </script>
+  </body>
+</html>
