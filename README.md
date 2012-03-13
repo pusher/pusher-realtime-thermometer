@@ -14,7 +14,8 @@ Originally developed for the GiveCamp UK event. You can see the a blog post writ
 
 1. Renaming `example/config.example.php` to `example/config.php` and update the credentials
 2. Update the application key which is passed into the `Pusher` constructor in `example/index.html`
-3. A database also needs to be in place to persist the widget values. The structure of the table used by `example/current_total.php` is
+3. Update the URL for the initial value AJAX call in `example/index.html`
+4. A database also needs to be in place to persist the widget values. The structure of the table used by `example/current_total.php` is
 
         CREATE TABLE IF NOT EXISTS `givecampuk` (
           `id` int(11) NOT NULL auto_increment,
